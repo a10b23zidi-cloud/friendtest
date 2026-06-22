@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How Well Do You Know Me?</title>
+<style>
+  :root{
+    --bg1:#ffe4bf;
+    --bg2:#fff7ed;
+    --card:#ffffffee;
+    --line:#ffd59a;
+    --orange:#ff8a1f;
+    --orange2:#ffb25b;
+    --text:#3b2a1f;
+    --muted:#7a6658;
+    --good:#16a34a;
+    --bad:#dc2626;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: Arial, Helvetica, sans-serif;
+    color:var(--text);
+    background: linear-gradient(135deg,var(--bg1),var(--bg2));
+    min-height:100vh;
+  }
+  .wrap{
+    max-width:980px;
+    margin:0 auto;
+    padding:20px;
+  }
+  .hero{
+    text-align:center;
+    margin: 12px 0 18px;
+  }
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:#fff2df;
+    border:1px solid #ffd7a8;
+    color:#a95a00;
+    border-radius:999px;
+    padding:8px 14px;
+    font-size:14px;
+    font-weight:700;
+    box-shadow:0 8px 30px rgba(255,138,31,.08);
+  }
+  h1{
+    margin:12px 0 8px;
+    font-size:clamp(30px,5vw,48px);
+    line-height:1.05;
+  }
+  .sub{
+    margin:0 auto;
+    max-width:760px;
+    color:var(--muted);
+    font-size:16px;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid rgba(255, 213, 154, .8);
+    border-radius:28px;
+    box-shadow:0 18px 50px rgba(180,90,0,.12);
+    backdrop-filter: blur(10px);
+    overflow:hidden;
+  }
+  .card-inner{padding:18px}
+  .row{display:grid; gap:16px}
+  .two{grid-template-columns:1fr 1fr}
+  @media (max-width: 860px){ .two{grid-template-columns:1fr} }
+  .panel{
+    background:#fff;
+    border:1px solid #ffe1ba;
+    border-radius:22px;
+    padding:16px;
+    box-shadow:0 8px 24px rgba(0,0,0,.04);
+  }
+  .panel h2{margin:0 0 12px;font-size:22px}
+  .label{font-size:13px;font-weight:700;color:#8b5a00;margin:0 0 6px}
+  input[type="text"], textarea, select{
+    width:100%;
+    border:1px solid #f2c98e;
+    border-radius:14px;
+    padding:12px 13px;
+    font:inherit;
+    background:#fff;
+    color:var(--text);
+    outline:none;
+  }
+  textarea{min-height:90px;resize:vertical}
+  input[type="text"]:focus, textarea:focus, select:focus{border-color:var(--orange); box-shadow:0 0 0 3px rgba(255,138,31,.12)}
+  .btnrow{display:flex; flex-wrap:wrap; gap:10px}
+  button{
+    border:0;
+    border-radius:14px;
+    padding:12px 16px;
+    font:inherit;
+    font-weight:700;
+    cursor:pointer;
+    transition:.15s transform,.15s opacity,.15s background;
+  }
+  button:hover{transform:translateY(-1px)}
+  .primary{background:linear-gradient(135deg,var(--orange),var(--orange2)); color:white}
+  .ghost{background:#fff4e5;color:#8a4b00;border:1px solid #ffd8a8}
+  .danger{background:#ffe6e6;color:#9b1c1c;border:1px solid #ffbcbc}
+  .tiny{padding:9px 12px;border-radius:12px;font-size:13px}
+  .muted{color:var(--muted); font-size:13px; line-height:1.5}
+  .qbox{
+    border:1px solid #ffd7a8;
+    background:linear-gradient(180deg,#fff, #fffaf3);
+    border-radius:20px;
+    padding:14px;
+    margin-top:14px;
+  }
+  .qhead{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    margin-bottom:10px;
+  }
+  .qnum{
+    font-weight:800;
+    color:#a75b00;
+    background:#fff1de;
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:13px;
+  }
+  .grid4{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  @media (max-width: 700px){ .grid4{grid-template-columns:1fr} }
+  .quizBox{
+    display:none;
+    padding:18px;
+  }
+  .quizTop{
+    display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+    margin-bottom:10px;
+  }
+  .pill{
+    display:inline-flex; align-items:center; gap:8px;
+    background:#fff1de; border:1px solid #ffd7a8; color:#a75b00;
+    padding:8px 12px; border-radius:999px; font-weight:700; font-size:14px;
+  }
+  .progress{
+    width:100%; height:12px; background:#ffe9ca; border-radius:999px; overflow:hidden; border:1px solid #ffd7a8;
+  }
+  .bar{height:100%; width:0%; background:linear-gradient(90deg,var(--orange),#ffbf73); transition:width .25s}
+  .answerBtn{
+    width:100%;
+    text-align:left;
+    background:#fff8ef;
+    border:1px solid #ffe0b8;
+    margin-top:10px;
+    color:var(--text);
+  }
+  .answerBtn.selected{background:#ffe5c3; border-color:#ffbf73}
+  .center{text-align:center}
+  .bigScore{
+    font-size:clamp(34px, 5vw, 56px);
+    font-weight:900;
+    margin:10px 0 8px;
+  }
+  .sharebox{
+    margin-top:12px;
+    background:#fffaf3;
+    border:1px dashed #ffcd8a;
+    border-radius:18px;
+    padding:14px;
+  }
+  .linkline{
+    display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+  }
+  .linkline input{
+    flex:1;
+    min-width:240px;
+  }
+  .ok{color:var(--good); font-weight:700}
+  .err{color:var(--bad); font-weight:700}
+  .splitTitle{
+    display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;
+  }
+  .smallNote{
+    font-size:12px;
+    color:var(--muted);
+    margin-top:8px;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <div class="badge">🍊 Cute orange friend quiz • shareable link • creator mode + player mode</div>
+      <h1>How well do you know me?</h1>
+      <p class="sub">
+        The creator fills in the questions first, then clicks <b>Share link</b>. Friends open that link and go straight to the quiz.
+        After the score, they can make their own version and send it to other friends.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="card-inner">
+        <div id="creatorView">
+          <div class="row two">
+            <div class="panel">
+              <div class="splitTitle">
+                <h2>Creator mode</h2>
+                <span class="pill">✏️ Make the quiz</span>
+              </div>
+
+              <div class="label">Quiz title</div>
+              <input id="quizTitle" type="text" value="How well do you know me?" />
+
+              <div style="height:10px"></div>
+
+              <div class="label">Short intro text</div>
+              <textarea id="quizIntro">Answer the questions and see your score at the end!</textarea>
+
+              <div style="height:12px"></div>
+
+              <div class="btnrow">
+                <button class="primary" onclick="shareQuiz()">🔗 Share link</button>
+                <button class="ghost" onclick="saveDraft()">💾 Save draft</button>
+                <button class="ghost" onclick="loadDraft()">↩️ Load saved draft</button>
+                <button class="ghost" onclick="resetQuiz()">🧡 Reset 10 questions</button>
+              </div>
+
+              <div class="sharebox">
+                <div class="label">Your share link</div>
+                <div class="linkline">
+                  <input id="shareLink" type="text" readonly placeholder="Click Share link to generate it here" />
+                  <button class="primary tiny" onclick="copyLink()">Copy</button>
+                </div>
+                <div class="smallNote">Send this link to your friends. When they open it, they will see only the quiz, not the editor.</div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="splitTitle">
+                <h2>Questions</h2>
+                <span class="pill" id="countPill">10 questions</span>
+              </div>
+
+              <div class="btnrow">
+                <button class="ghost" onclick="addQuestion()">➕ Add question</button>
+                <button class="ghost" onclick="previewQuiz()">👀 Preview quiz</button>
+              </div>
+
+              <div id="editorQuestions"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="quizView" class="quizBox">
+          <div class="quizTop">
+            <div>
+              <div class="pill" id="quizFriendName">🎯 Friend quiz</div>
+              <div id="quizTitleText" style="margin-top:10px;font-size:28px;font-weight:900"></div>
+              <div id="quizIntroText" class="muted" style="max-width:760px;margin-top:6px"></div>
+            </div>
+            <button class="ghost" onclick="goToCreatorFromQuiz()">✏️ Create your own version</button>
+          </div>
+
+          <div class="progress"><div class="bar" id="bar"></div></div>
+
+          <div id="questionArea" style="margin-top:18px"></div>
+
+          <div id="resultArea" style="display:none" class="center">
+            <div class="bigScore" id="scoreText"></div>
+            <div id="resultMsg" style="font-size:18px;font-weight:700"></div>
+            <p class="muted" id="scoreDetail" style="max-width:700px;margin:10px auto 0"></p>
+            <div class="btnrow" style="justify-content:center;margin-top:16px">
+              <button class="primary" onclick="restartSameQuiz()">🔁 Play again</button>
+              <button class="ghost" onclick="goToCreatorFromQuiz()">➕ Make my own version</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const STORAGE_KEY = "friendQuizDraft_v2";
+  const HASH_PREFIX = "#quiz=";
+
+  function base64UrlEncode(str){
+    return btoa(unescape(encodeURIComponent(str)))
+      .replaceAll("+","-").replaceAll("/","_").replaceAll("=","");
+  }
+  function base64UrlDecode(str){
+    str = str.replaceAll("-","+").replaceAll("_","/");
+    while(str.length % 4) str += "=";
+    return decodeURIComponent(escape(atob(str)));
+  }
+
+  function defaultQuestions(){
+    return Array.from({length:10}, (_, i) => ({
+      question: `Question ${i+1}`,
+      answers: ["Answer A", "Answer B", "Answer C", "Answer D"],
+      correct: 0
+    }));
+  }
+
+  let state = {
+    title: "How well do you know me?",
+    intro: "Answer the questions and see your score at the end!",
+    questions: defaultQuestions()
+  };
+
+  let quizIndex = 0;
+  let quizScore = 0;
+  let quizAnswers = [];
+  let activeQuiz = null;
+
+  function saveDraft(){
+    syncFromEditor();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    alert("Saved!");
+  }
+
+  function loadDraft(){
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw){
+      alert("No saved draft found.");
+      return;
+    }
+    try{
+      state = JSON.parse(raw);
+      renderEditor();
+      alert("Loaded saved draft.");
+    }catch(e){
+      alert("Could not load saved draft.");
+    }
+  }
+
+  function resetQuiz(){
+    state = {
+      title: "How well do you know me?",
+      intro: "Answer the questions and see your score at the end!",
+      questions: defaultQuestions()
+    };
+    renderEditor();
+  }
+
+  function syncFromEditor(){
+    state.title = document.getElementById("quizTitle").value.trim() || "How well do you know me?";
+    state.intro = document.getElementById("quizIntro").value.trim() || "Answer the questions and see your score at the end!";
+  }
+
+  function renderEditor(){
+    document.getElementById("quizTitle").value = state.title;
+    document.getElementById("quizIntro").value = state.intro;
+    document.getElementById("countPill").textContent = `${state.questions.length} questions`;
+
+    const box = document.getElementById("editorQuestions");
+    box.innerHTML = "";
+
+    state.questions.forEach((q, i) => {
+      const el = document.createElement("div");
+      el.className = "qbox";
+      el.innerHTML = `
+        <div class="qhead">
+          <div class="qnum">Question ${i+1}</div>
+          <button class="danger tiny" onclick="deleteQuestion(${i})">🗑 Delete</button>
+        </div>
+
+        <div class="label">Question text</div>
+        <input type="text" value="${escapeHtml(q.question)}" oninput="state.questions[${i}].question=this.value" />
+
+        <div style="height:10px"></div>
+        <div class="label">Answers</div>
+        <div class="grid4">
+          <input type="text" value="${escapeHtml(q.answers[0] || '')}" oninput="state.questions[${i}].answers[0]=this.value" />
+          <input type="text" value="${escapeHtml(q.answers[1] || '')}" oninput="state.questions[${i}].answers[1]=this.value" />
+          <input type="text" value="${escapeHtml(q.answers[2] || '')}" oninput="state.questions[${i}].answers[2]=this.value" />
+          <input type="text" value="${escapeHtml(q.answers[3] || '')}" oninput="state.questions[${i}].answers[3]=this.value" />
+        </div>
+
+        <div style="height:10px"></div>
+        <div class="label">Correct answer</div>
+        <select onchange="state.questions[${i}].correct=parseInt(this.value,10)">
+          <option value="0" ${q.correct===0 ? "selected" : ""}>Answer 1</option>
+          <option value="1" ${q.correct===1 ? "selected" : ""}>Answer 2</option>
+          <option value="2" ${q.correct===2 ? "selected" : ""}>Answer 3</option>
+          <option value="3" ${q.correct===3 ? "selected" : ""}>Answer 4</option>
+        </select>
+      `;
+      box.appendChild(el);
+    });
+  }
+
+  function escapeHtml(s){
+    return String(s)
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#39;");
+  }
+
+  function addQuestion(){
+    state.questions.push({
+      question: `New question ${state.questions.length + 1}`,
+      answers: ["Answer A", "Answer B", "Answer C", "Answer D"],
+      correct: 0
+    });
+    renderEditor();
+  }
+
+  function deleteQuestion(i){
+    if(state.questions.length <= 1){
+      alert("Keep at least one question.");
+      return;
+    }
+    state.questions.splice(i, 1);
+    renderEditor();
+  }
+
+  function encodeQuiz(q){
+    return base64UrlEncode(JSON.stringify(q));
+  }
+
+  function decodeQuiz(s){
+    return JSON.parse(base64UrlDecode(s));
+  }
+
+  function shareQuiz(){
+    syncFromEditor();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+
+    const payload = encodeQuiz(state);
+    const url = `${location.origin}${location.pathname}#quiz=${payload}`;
+    document.getElementById("shareLink").value = url;
+
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(url).catch(()=>{});
+    }
+    alert("Link created! Copy it and send it to your friends.");
+  }
+
+  function copyLink(){
+    const input = document.getElementById("shareLink");
+    if(!input.value){
+      shareQuiz();
+      return;
+    }
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(input.value).then(()=>{
+        alert("Link copied!");
+      }).catch(()=>{
+        input.select();
+        document.execCommand("copy");
+        alert("Link copied!");
+      });
+    } else {
+      input.select();
+      document.execCommand("copy");
+      alert("Link copied!");
+    }
+  }
+
+  function previewQuiz(){
+    shareQuiz();
+    startQuiz(state);
+  }
+
+  function startQuiz(quiz){
+    activeQuiz = quiz;
+    quizIndex = 0;
+    quizScore = 0;
+    quizAnswers = [];
+    document.getElementById("creatorView").style.display = "none";
+    document.getElementById("quizView").style.display = "block";
+    document.getElementById("resultArea").style.display = "none";
+    document.getElementById("questionArea").style.display = "block";
+    document.getElementById("quizFriendName").textContent = "🎯 Friend quiz";
+    document.getElementById("quizTitleText").textContent = quiz.title || "How well do you know me?";
+    document.getElementById("quizIntroText").textContent = quiz.intro || "";
+    renderQuestion();
+  }
+
+  function renderQuestion(){
+    const q = activeQuiz.questions[quizIndex];
+    const area = document.getElementById("questionArea");
+    const total = activeQuiz.questions.length;
+    document.getElementById("bar").style.width = `${(quizIndex / total) * 100}%`;
+
+    area.innerHTML = `
+      <div class="panel">
+        <div class="splitTitle">
+          <h2 style="margin:0">Question ${quizIndex+1} of ${total}</h2>
+          <span class="pill">🍊 Cute score quiz</span>
+        </div>
+        <p style="font-size:22px;font-weight:800;margin:0 0 12px">${escapeHtml(q.question)}</p>
+        <div id="answerList"></div>
+      </div>
+    `;
+
+    const list = document.getElementById("answerList");
+    q.answers.forEach((a, idx) => {
+      const btn = document.createElement("button");
+      btn.className = "answerBtn";
+      btn.textContent = a || `Answer ${idx+1}`;
+      btn.onclick = () => chooseAnswer(idx, btn);
+      list.appendChild(btn);
+    });
+  }
+
+  function chooseAnswer(choiceIndex, buttonEl){
+    const q = activeQuiz.questions[quizIndex];
+    quizAnswers.push(choiceIndex);
+    if(choiceIndex === q.correct) quizScore++;
+
+    quizIndex++;
+    if(quizIndex >= activeQuiz.questions.length){
+      finishQuiz();
+    } else {
+      renderQuestion();
+    }
+  }
+
+  function finishQuiz(){
+    const total = activeQuiz.questions.length;
+    document.getElementById("questionArea").style.display = "none";
+    document.getElementById("resultArea").style.display = "block";
+    document.getElementById("bar").style.width = "100%";
+    document.getElementById("scoreText").textContent = `${quizScore} / ${total}`;
+
+    let msg = "Nice try!";
+    if(quizScore === total) msg = "Perfect best friend!";
+    else if(quizScore >= total * 0.8) msg = "Very close friend!";
+    else if(quizScore >= total * 0.5) msg = "Getting there!";
+    else msg = "You still have time to learn more about me!";
+    document.getElementById("resultMsg").textContent = msg;
+
+    document.getElementById("scoreDetail").textContent =
+      "Now you can create your own version of this quiz and send it to other friends.";
+  }
+
+  function restartSameQuiz(){
+    startQuiz(activeQuiz);
+  }
+
+  function goToCreatorFromQuiz(){
+    document.getElementById("quizView").style.display = "none";
+    document.getElementById("creatorView").style.display = "block";
+    if(activeQuiz){
+      state = JSON.parse(JSON.stringify(activeQuiz));
+      renderEditor();
+      document.getElementById("shareLink").value = "";
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function maybeLoadFromHash(){
+    const hash = location.hash || "";
+    if(hash.startsWith(HASH_PREFIX)){
+      try{
+        const payload = hash.slice(HASH_PREFIX.length);
+        const quiz = decodeQuiz(payload);
+        if(!quiz.questions || !Array.isArray(quiz.questions)) throw new Error("bad");
+        activeQuiz = quiz;
+        document.getElementById("creatorView").style.display = "none";
+        document.getElementById("quizView").style.display = "block";
+        document.getElementById("quizTitleText").textContent = quiz.title || "How well do you know me?";
+        document.getElementById("quizIntroText").textContent = quiz.intro || "";
+        startQuiz(quiz);
+        return true;
+      } catch (e) {
+        alert("This quiz link looks broken. Opening editor instead.");
+      }
+    }
+    return false;
+  }
+
+  // Initialize editor from saved draft or defaults, unless a quiz link is opened.
+  const loadedFromLink = maybeLoadFromHash();
+  if(!loadedFromLink){
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      try{
+        state = JSON.parse(raw);
+      }catch(e){}
+    }
+    renderEditor();
+  }
+</script>
+</body>
+</html>
